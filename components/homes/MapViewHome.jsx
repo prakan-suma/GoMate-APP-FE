@@ -1,52 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
+import MapView, { Marker } from 'react-native-maps'
+import * as Location from 'expo-location'
 
-const MapViewHome = ({ selectedLocation }) => {
+function MapViewHome() {
   const [location, setLocation] = useState(null);
 
+
   useEffect(() => {
-    const getLocation = async () => {
+    (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permission to access location was denied');
         return;
       }
 
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation.coords);
-    };
+      const getLocation = async () => {
+        let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+        setLocation(loc.coords);
+      };
 
-    getLocation();
+      getLocation();
+      const locationSubscription = Location.watchPositionAsync(
+        { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 10 },
+        (loc) => {
+          setLocation(loc.coords);
+        }
+      );
+
+      return () => {
+        locationSubscription.then((sub) => sub.remove());
+      };
+    })();
   }, []);
 
   return (
-    <MapView
-      style={styles.map}
-      region={{
-        latitude: selectedLocation?.latitude || location?.latitude || 13.7563,
-        longitude: selectedLocation?.longitude || location?.longitude || 100.5018,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      }}
-    >
-      {selectedLocation && (
-        <Marker coordinate={selectedLocation} title="สถานที่ที่เลือก" />
-      )}
+    <View className='flex-1'>
+    {location && (
+      <MapView
+        style={{
+          width:"100%",
+          height:"100%",
+        }}
+        initialRegion={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+        showsUserLocation={true}
+        followsUserLocation={true}
+      >
+        {/* <Marker
+          coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+          
+        /> */}
+      </MapView>
+    )}
+  </View>
+  )
+}
 
-      {location && !selectedLocation && (
-        <Marker coordinate={location} title="ตำแหน่งปัจจุบัน" />
-      )}
-    </MapView>
-  );
-};
+export default MapViewHome
 
-const styles = StyleSheet.create({
-  map: {
-    width: '100%',
-    height: '100%',
-  },
-});
-
-export default MapViewHome;

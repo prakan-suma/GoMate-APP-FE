@@ -8,67 +8,12 @@ import { Ionicons } from "@expo/vector-icons";
 
 const GOOGLE_MAP_API_KEY = Constants.expoConfig.extra.GOOGLE_MAP_API_KEY;
 
-function Content({ setSelectedLocation }) {
+function Content() {
   const [userType, setUserType] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [places, setPlaces] = useState([]);
 
-  // find places func
-  const handleSearch = async (text) => {
-    setSearchValue(text);
-    if (text.length > 2) {
-      try {
-        const response = await axios.get("https://maps.googleapis.com/maps/api/place/autocomplete/json", {
-          params: {
-            input: text,
-            key: GOOGLE_MAP_API_KEY,
-          },
-        });
-        setPlaces(response.data.predictions);
-      } catch (error) {
-        console.error("Error fetching places:", error);
-      }
-    } else {
-      setPlaces([]);
-    }
-  };
 
-  // When user choose place
-  const handleSelectPlace = async (placeId) => {
-    try {
-      const response = await axios.get("https://maps.googleapis.com/maps/api/place/details/json", {
-        params: {
-          place_id: placeId,
-          key: GOOGLE_MAP_API_KEY,
-          fields: "geometry",
-        },
-      });
-      const location = response.data.result.geometry.location;
-      setSelectedLocation({ latitude: location.lat, longitude: location.lng });
-      setSearchValue(""); // Clear search input
-      setPlaces([]); // Clear suggestions
-    } catch (error) {
-      console.error("Error fetching place details:", error);
-    }
-  };
-
-  const renderPlaceItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.placeItem}
-      onPress={() => handleSelectPlace(item.place_id)}
-    >
-      <Ionicons name="location-outline" size={20} color="#6B7280" />
-      <View style={styles.placeTextContainer}>
-        <Text style={styles.placePrimaryText}>
-          {item.structured_formatting?.main_text || item.description.split(',')[0]}
-        </Text>
-        <Text style={styles.placeSecondaryText}>
-          {item.structured_formatting?.secondary_text || item.description.split(',').slice(1).join(',')}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.dragIndicator}>
@@ -89,20 +34,9 @@ function Content({ setSelectedLocation }) {
 
       <SearchInput
         placeholder="ค้นหาสถานที่..."
-        value={searchValue}
-        onChangeText={handleSearch}
-        onSearch={handleSearch} 
+        value={searchValue} 
       />
 
-      {places.length > 0 && (
-        <FlatList
-          data={places}
-          keyExtractor={(item) => item.place_id}
-          renderItem={renderPlaceItem}
-          style={styles.placesList}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
     </View>
   );
 }

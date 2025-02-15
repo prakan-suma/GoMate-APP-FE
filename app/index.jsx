@@ -1,16 +1,13 @@
 import Content from "@components/homes/Content";
+import MapViewHome from "@components/homes/MapViewHome";
 import React, { useRef, useState } from "react";
 import { View, Animated } from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
-import MapViewHome from "@components/homes/MapViewHome";
 
 export default function Home() {
   // Home const
   const height = useRef(new Animated.Value(300)).current;
   const lastGesture = useRef(300);
-
-  // Map const
-  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const onGestureEvent = Animated.event(
     [{ nativeEvent: { translationY: height } }],
@@ -43,17 +40,6 @@ export default function Home() {
       useNativeDriver: false,
     }).start();
   };
-
-  // เมื่อผู้ใช้เลือกสถานที่จาก autocomplete
-  const handlePlaceSelected = (place) => {
-    console.log('Selected place:', place);
-    // คุณสามารถใช้ place.place_id เพื่อติดต่อ API เพิ่มเติม เช่น Place Details API
-    if (place.geometry) {
-      const { lat, lng } = place.geometry.location;
-      setSelectedLocation({ latitude: lat, longitude: lng });
-    }
-  };
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
@@ -74,13 +60,14 @@ export default function Home() {
               paddingBottom: 24,
             }}
           >
-            <Content setSelectedLocation={setSelectedLocation} />
+            <Content />
           </Animated.View>
         </PanGestureHandler>
-        
-        
-        {/* Render MapViewHome เมื่อเลือกสถานที่ */}
-        <MapViewHome selectedLocation={selectedLocation} />
+
+        <View className="w-full h-full">
+          <MapViewHome />
+        </View>
+
       </View>
     </GestureHandlerRootView>
   );

@@ -1,6 +1,6 @@
-import MapViewHome from '@components/homes/MapViewHome'
+import SearchPlace from '@components/homes/SearchPlace'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
 export default function Driver() {
   return (

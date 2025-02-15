@@ -53,9 +53,9 @@ export default function SearchPlace({ onLocationSelected }) {
   };
 
   return (
-    <View className="absolute w-full z-10 mt-4 px-2">
+    <View className="w-full z-10 my-2 px-3">
       {/* Search Box */}
-      <View className="flex-row items-center bg-white border border-gray-300 rounded-lg px-4 py-2">
+      <View className="flex-row items-center bg-white border border-gray-300 rounded-lg px-4 py-1">
         <Ionicons name="search" size={20} color="#2C64F3" />
         <TextInput
           className="flex-1 ml-2"

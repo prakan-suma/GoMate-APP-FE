@@ -7,7 +7,7 @@ export const LocationProvider = ({ children }) => {
 
   return (
     <LocationContext.Provider value={{ location, setLocation }}>
-      {children}  
+      {children} 
     </LocationContext.Provider>
   );
 };

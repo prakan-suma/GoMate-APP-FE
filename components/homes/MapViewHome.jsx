@@ -4,7 +4,7 @@ import MapView, { Marker } from "react-native-maps";
 import { useLocation } from "@context/LocationContext";
 
 function MapViewHome() {
-  const { location } = useLocation(); // ใช้ location จาก Context
+  const { location } = useLocation(); 
 
   return (
     <View style={{ flex: 1 }}>

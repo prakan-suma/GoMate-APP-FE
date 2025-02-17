@@ -7,9 +7,8 @@ import * as Location from "expo-location";
 import { useLocation } from "@context/LocationContext";
 
 export default function Home() {
-  const { location, setLocation } = useLocation(); // ใช้ location จาก Context
+  const { location, setLocation } = useLocation(); 
 
-  // Gesture state
   const height = useRef(new Animated.Value(300)).current;
   const lastGesture = useRef(300);
 

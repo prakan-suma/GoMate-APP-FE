@@ -22,7 +22,7 @@ const Content = () => {
       </View>
 
       <View className="flex-row items-center bg-white border border-gray-300 rounded-lg px-4">
-        <Link href={"/home/search_place"} className="w-full py-3 flex-row items-center">
+        <Link href={"/home/SearchPlaceScreen"} className="w-full py-3 flex-row items-center">
           <View className="flex-row items-center">
             <Ionicons name="search" size={20} color="#2C64F3" />
             <Text className="text-gray-400 ml-2">ค้นหาสถานที่...</Text>

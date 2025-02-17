@@ -7,7 +7,7 @@ import { Link } from 'expo-router';
 const Content = () => {
   const [userType, setUserType] = useState(false);
   return (
-    <View className="bg-white w-full p-5 rounded-xl shadow-lg gap-4">
+    <View className="w-full py-6 rounded-xl  gap-4">
       <View className="w-full flex-row justify-center mb-2">
         <View className="w-1/2 h-1 bg-gray-300 rounded-lg" />
       </View>

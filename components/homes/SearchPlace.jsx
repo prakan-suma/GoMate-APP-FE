@@ -10,8 +10,8 @@ export default function SearchPlace({ onClose }) {
   const [query, setQuery] = useState("");
   const [places, setPlaces] = useState([]);
   const [searchHistory, setSearchHistory] = useState([]);
-  const [searchHistoryVisible, setSearchHistoryVisible] = useState(true); // สถานะในการแสดงประวัติการค้นหา
-  const { setLocation } = useLocation();
+  const [searchHistoryVisible, setSearchHistoryVisible] = useState(true);
+  const { setLocation, setSelectedPlace } = useLocation();
 
   // ฟังก์ชันเพื่อดึงประวัติการค้นหาจาก AsyncStorage
   const loadSearchHistory = async () => {
@@ -64,14 +64,22 @@ export default function SearchPlace({ onClose }) {
       }
 
       const { lat, lng } = data.result.geometry.location;
-      const placeName = data.result.name;
+      
+      // dataset for selected place 
+      const placeDetails = {
+        name:data.result.name,
+        address: data.result.formatted_address,
+        photos: data.result.photos || [],
+      };
+
       setLocation({ latitude: lat, longitude: lng });
+      setSelectedPlace(placeDetails);
 
       setQuery("");
       setPlaces([]);
-      setSearchHistoryVisible(true); // รีเซ็ตสถานะให้แสดงประวัติการค้นหาหลังจากกดค้นหา
+      setSearchHistoryVisible(true);
 
-      addSearchHistory(placeName);
+      addSearchHistory(placeDetails.name);
 
       if (onClose) {
         onClose();
@@ -95,9 +103,9 @@ export default function SearchPlace({ onClose }) {
 
   // ฟังก์ชันเมื่อกดที่ประวัติการค้นหา
   const handleHistoryItemPress = (placeName) => {
-    setQuery(placeName); // ตั้งค่า query เป็นชื่อที่เลือกจากประวัติ
-    fetchPlaces(placeName); // เรียกค้นหาทันที
-    setSearchHistoryVisible(false); // ซ่อนประวัติการค้นหา
+    setQuery(placeName);
+    fetchPlaces(placeName);
+    setSearchHistoryVisible(false);
   };
 
   return (
@@ -110,8 +118,8 @@ export default function SearchPlace({ onClose }) {
           placeholder="ค้นหาสถานที่..."
           value={query}
           onChangeText={fetchPlaces}
-          onFocus={() => setSearchHistoryVisible(false)}  // ซ่อนประวัติเมื่อคลิกช่องค้นหา
-          onBlur={() => setSearchHistoryVisible(true)}    // แสดงประวัติเมื่อไม่ได้โฟกัสช่องค้นหา
+          onFocus={() => setSearchHistoryVisible(false)}
+          onBlur={() => setSearchHistoryVisible(true)}
         />
       </View>
 
@@ -125,7 +133,7 @@ export default function SearchPlace({ onClose }) {
             renderItem={({ item }) => (
               <TouchableOpacity
                 className="flex-row p-3 border-b border-slate-200"
-                onPress={() => handleHistoryItemPress(item)} // ค้นหาทันทีเมื่อคลิกที่ประวัติ
+                onPress={() => handleHistoryItemPress(item)}
               >
                 <Ionicons name="time-outline" size={20} color="#6b7280" />
                 <Text className="ml-3 text-gray-700">{item}</Text>

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { View, TextInput, FlatList, TouchableOpacity, Text } from "react-native";
 import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocation } from "../../context/LocationContext"; 
 
-export default function SearchPlace({ onLocationSelected }) {
+export default function SearchPlace({onClose}) {
   const GOOGLE_MAP_API_KEY = Constants.expoConfig.extra.GOOGLE_MAP_API_KEY;
   const [query, setQuery] = useState("");
   const [places, setPlaces] = useState([]);
+  const { setLocation } = useLocation(); 
 
   const fetchPlaces = async (text) => {
     setQuery(text);
@@ -23,7 +25,6 @@ export default function SearchPlace({ onLocationSelected }) {
         return;
       }
 
-      console.log("Autocomplete Data:", data);
       setPlaces(data.predictions);
     } catch (error) {
       console.error("Fetch Places Error:", error);
@@ -43,10 +44,14 @@ export default function SearchPlace({ onLocationSelected }) {
       }
 
       const { lat, lng } = data.result.geometry.location;
-      onLocationSelected({ latitude: lat, longitude: lng });
+      setLocation({ latitude: lat, longitude: lng }); 
 
       setQuery("");
       setPlaces([]);
+
+      if (onClose){
+        onClose();
+      }
     } catch (error) {
       console.error("Fetch Place Details Error:", error);
     }

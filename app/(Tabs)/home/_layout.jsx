@@ -1,12 +1,18 @@
+import { LocationProvider } from 'context/LocationContext'
 import { Stack } from 'expo-router'
 import React from 'react'
 
 function HomeLayout() {
   return (
-    <Stack screenOptions={{
-      headerShown: false
-    }} />
+    <LocationProvider>
+      <Stack
+        screenOptions={{
+          title: "ค้นหาสถานที่",
+          headerShown: false,
+        }} />
+    </LocationProvider>
   )
+
 }
 
 export default HomeLayout

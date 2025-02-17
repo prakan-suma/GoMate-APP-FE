@@ -1,12 +1,16 @@
-import React from 'react'
-import { View,Text } from 'react-native'
+import React from "react";
+import { View } from "react-native";
+import SearchPlace from "@components/homes/SearchPlace";
+import { useRouter } from "expo-router"; 
 
-function searchPlace() {
+function SearchPlaceScreen() {
+  const router = useRouter();
+
   return (
-    <View>
-      <Text>seach SearchPlace</Text>
+    <View className="p-4">
+       <SearchPlace onClose={() => router.back()} /> 
     </View>
-  )
+  );
 }
 
-export default searchPlace
+export default SearchPlaceScreen;

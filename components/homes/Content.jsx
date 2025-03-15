@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput } from "react-native";
 import UserTypeSwitch from "./UserTypeSwitch";
+import SwitchContent from "./SwitchContent";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from 'expo-router';
 
@@ -11,10 +12,14 @@ const Content = () => {
       <View className="w-full flex-row justify-center mb-2">
         <View className="w-1/2 h-1 bg-gray-300 rounded-lg" />
       </View>
-
+      
       <Text className="text-gray-800 font-bold">เลือกประเภทผู้ใช้งาน</Text>
 
       <UserTypeSwitch value={userType} onValueChange={setUserType} />
+
+      <View>
+        <SwitchContent value={userType}/>
+      </View>
 
       <View className="my-1">
         <Text className="text-gray-400 font-regular">สวัสดียามเช้า</Text>

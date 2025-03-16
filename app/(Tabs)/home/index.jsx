@@ -6,9 +6,10 @@ import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-
 import * as Location from "expo-location";
 import { useLocation } from "@context/LocationContext";
 import PlaceDetailHome from "@components/homes/PlaceDetailHome";
+import SelectRoute from "@components/homes/SelectRoute";
 
 export default function Home() {
-  const { location, setLocation, selectedPlace } = useLocation();
+  const { location, setLocation, selectedPlace, locationUser} = useLocation();
   const [contentHeight, setContentHeight] = useState(300);
   const [isExpanded, setIsExpanded] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(false);
@@ -130,7 +131,13 @@ export default function Home() {
             // contentContainerStyle={{ paddingTop: 12 }}
             >
               <View onLayout={onContentLayout}>
-                {selectedPlace ? <PlaceDetailHome place={selectedPlace} /> : <Content />}
+              {locationUser && selectedPlace ? (
+                <SelectRoute/>  // แสดงคอมโพเนนต์ใหม่เมื่อมีทั้ง selectedPlace และ selectedUserLocation
+              ) : selectedPlace ? (
+                <PlaceDetailHome place={selectedPlace} />  // แสดง PlaceDetailHome เมื่อมีแค่ selectedPlace
+              ) : (
+                <Content />  // แสดง Content เมื่อไม่มี selectedPlace
+              )}
               </View>
             </ScrollView>
           </Animated.View>

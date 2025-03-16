@@ -4,13 +4,17 @@ import Constants from "expo-constants";
 import ButtonWithIcon from "@components/ui/ButtonWithIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocation } from "@context/LocationContext";
+import { Link,useRouter  } from "expo-router";
+
 
 export default function PlaceDetailHome({ place }) {
+  const router = useRouter();
   const GOOGLE_MAP_API_KEY = Constants.expoConfig.extra.GOOGLE_MAP_API_KEY;
-  const { setSelectedPlace } = useLocation();
+  const {setLocationPlace,setSelectedPlace} = useLocation();
 
   const handleBackPress = () => {
     setSelectedPlace(null);
+    setLocationPlace(null);
   };
 
   return (
@@ -38,11 +42,17 @@ export default function PlaceDetailHome({ place }) {
         </View>
 
         <View className="flex-row gap-2 justify-around my-6">
-          <ButtonWithIcon iconName={"car"} iconColor={"white"} text={"เดินทาง"} bg={"bg-blue-500"} />
+
+          <TouchableOpacity className={`flex-1 items-center px-4 py-1  rounded-lg bg-blue-500` } onPress={() => router.push("/home/SetPlaceLocation")}>
+                <Ionicons name="car" size={22} color="white" />
+                <Text className="text-white text-sm" >เดินทาง</Text>
+          </TouchableOpacity>
+
           <ButtonWithIcon iconName={"bookmark"} iconColor={"white"} text={"บันทึก"} bg={"bg-slate-400"} />
           <ButtonWithIcon iconName={"copy"} iconColor={"white"} text={"คัดลอก"} bg={"bg-slate-400"} />
           <ButtonWithIcon iconName={"share"} iconColor={"white"} text={"แชร์"} bg={"bg-slate-400"} />
         </View>
+
 
         <Text className="text-slate-500 text-sm mb-4">{place.address}</Text>
 
@@ -60,6 +70,7 @@ export default function PlaceDetailHome({ place }) {
               />
             )}
           />
+          
         )}
       </View>
     </ScrollView>

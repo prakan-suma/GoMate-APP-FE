@@ -1,3 +1,4 @@
+import { UserProvider } from '@context/UserContext'
 import { LocationProvider } from 'context/LocationContext'
 import { Stack } from 'expo-router'
 import React from 'react'
@@ -5,11 +6,13 @@ import React from 'react'
 function HomeLayout() {
   return (
     <LocationProvider>
-      <Stack
-        screenOptions={{
-          title: "ค้นหาสถานที่",
-          headerShown: false,
-        }} />
+      <UserProvider>
+        <Stack
+          screenOptions={{
+            title: "ค้นหาสถานที่",
+            headerShown: false,
+          }} />
+      </UserProvider>
     </LocationProvider>
   )
 

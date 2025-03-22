@@ -4,7 +4,7 @@ import React from 'react'
 function SettingLayout() {
   return (
     <Stack>
-      <Stack.Screen name='index' options={{title: "Setting"}}/>
+      <Stack.Screen name='index' options={{title: "Setting",headerShown: false,}}/>
     </Stack>
   )
 }

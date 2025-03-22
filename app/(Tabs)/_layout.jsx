@@ -20,7 +20,7 @@ export default function TabsLayout() {
     >
       {[
         { name: "home", label: "Home", icon: "home-outline", iconFocused: "home" },
-        { name: "driver", label: "Driver", icon: "car-outline", iconFocused: "car" },
+        { name: "trip", label: "Trip", icon: "car-outline", iconFocused: "car" },
         { name: "history", label: "History", icon: "time-outline", iconFocused: "time" },
         { name: "setting", label: "Setting", icon: "settings-outline", iconFocused: "settings" },
       ].map(({ name, label, icon, iconFocused }) => (

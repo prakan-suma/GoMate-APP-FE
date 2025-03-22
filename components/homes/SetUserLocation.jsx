@@ -123,14 +123,15 @@ export default function SetUserLocation({ onClose }){
         {/* Search Box */}
         <View style={{flexDirection: "row",alignItems: "center",padding:10,marginRight:25,}}>
             <Ionicons name="ellipse-outline" size={20} color="#2C64F3" style={{paddingRight:10}}/>
-            <View className="flex-row items-center bg-white border border-gray-300 rounded-lg px-4 py-1" >
+            <View className="flex-row items-center bg-white border border-gray-300 rounded-lg px-4 py-1" style={{borderColor:"#2C64F3"}}>
                 <TextInput
                     className="flex-1 ml-2"
-                    placeholder="ค้นหาสถานที่..."
+                    placeholder="ค้นหาตำแหน่งของคุณ"
                     value={query}
                     onChangeText={fetchPlaces}
                     onFocus={() => setSearchHistoryVisible(false)}
                     onBlur={() => setSearchHistoryVisible(true)}
+                    style={{fontSize: 18}}
                 />
             </View>
         </View>

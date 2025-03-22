@@ -4,9 +4,10 @@ import UserTypeSwitch from "./UserTypeSwitch";
 import SwitchContent from "./SwitchContent";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from 'expo-router';
+import { useUser } from "@context/UserContext";
 
 const Content = () => {
-  const [userType, setUserType] = useState(false);
+
   return (
     <View className="w-full py-6 rounded-xl  gap-4">
       <View className="w-full flex-row justify-center mb-2">
@@ -15,10 +16,10 @@ const Content = () => {
       
       <Text className="text-gray-800 font-bold">เลือกประเภทผู้ใช้งาน</Text>
 
-      <UserTypeSwitch value={userType} onValueChange={setUserType} />
+      <UserTypeSwitch/>
 
       <View>
-        <SwitchContent value={userType}/>
+        <SwitchContent/>
       </View>
 
       <View className="my-1">

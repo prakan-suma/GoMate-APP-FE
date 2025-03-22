@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, Switch, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import {useRouter  } from "expo-router";
 
 const SettingScreen = () => {
   const navigation = useNavigation();
   const [emailNotification, setEmailNotification] = useState(true);
   const [smsNotification, setSmsNotification] = useState(false);
+  const router = useRouter();
 
   const goToEditPage = () => {
-    navigation.navigate('Edit_p'); 
+    router.push("/setting/EditProfile")
   };
 
   return (
@@ -42,8 +44,8 @@ const SettingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
-  header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  container: { flex: 1, backgroundColor: "#fff", padding: 25},
+  header: { fontSize: 24, fontWeight: "bold", marginBottom: 10 ,padding: 10},
   profileContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   profileImage: { width: 60, height: 60, borderRadius: 30, marginRight: 15 },
   profileText: { flex: 1 },

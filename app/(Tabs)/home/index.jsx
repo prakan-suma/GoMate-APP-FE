@@ -144,7 +144,7 @@ export default function Home() {
         </PanGestureHandler>
 
         {/* Map View */}
-        <MapViewHome />
+        <MapViewHome/>
       </View>
     </GestureHandlerRootView>
   );

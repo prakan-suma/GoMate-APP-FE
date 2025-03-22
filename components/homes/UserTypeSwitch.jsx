@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Animated } from 'react-native';
+import { useUser } from '@context/UserContext';
 
-const UserTypeSwitch = ({ onValueChange, value }) => {
-  const [switchTranslate] = useState(new Animated.Value(value ? 1 : 0));
+
+const UserTypeSwitch = () => {
+  const [switchTranslate] = useState(new Animated.Value(Role ? 1 : 0));
+  const {Role,setRole} = useUser();
 
   const toggleSwitch = () => {
     Animated.spring(switchTranslate, {
-      toValue: value ? 0 : 1,
+      toValue: Role ? 0 : 1,
       useNativeDriver: true,
     }).start();
-    onValueChange(!value);
+    setRole(!Role);
   };
 
   return (

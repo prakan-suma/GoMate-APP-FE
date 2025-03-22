@@ -11,7 +11,7 @@ export default function SearchPlace({ onClose }) {
   const [places, setPlaces] = useState([]);
   const [searchHistory, setSearchHistory] = useState([]);
   const [searchHistoryVisible, setSearchHistoryVisible] = useState(true);
-  const { setLocation, setSelectedPlace } = useLocation();
+  const { setLocationPlace, setSelectedPlace } = useLocation();
 
   // ฟังก์ชันเพื่อดึงประวัติการค้นหาจาก AsyncStorage
   const loadSearchHistory = async () => {
@@ -72,7 +72,7 @@ export default function SearchPlace({ onClose }) {
         photos: data.result.photos || [],
       };
 
-      setLocation({ latitude: lat, longitude: lng });
+      setLocationPlace({ latitude: lat, longitude: lng });
       setSelectedPlace(placeDetails);
 
       setQuery("");

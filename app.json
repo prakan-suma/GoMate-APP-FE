@@ -1,7 +1,8 @@
 {
   "expo": {
     "extra": {
-      "GOOGLE_MAP_API_KEY": "AIzaSyBVh6zYlo9yheixkTxJ7EuzCKeETesV9z8"
+      "GOOGLE_MAP_API_KEY": "AIzaSyBVh6zYlo9yheixkTxJ7EuzCKeETesV9z8",
+      "API_BE_URL": "https://gomate-backend-618388646723.us-central1.run.app"
     },
     "name": "GoMate-APP-FE",
     "slug": "GoMate-APP-FE",

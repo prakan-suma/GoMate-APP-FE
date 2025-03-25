@@ -15,12 +15,48 @@ export default function SetUserLocation({ onClose }){
     const [searchHistoryVisible, setSearchHistoryVisible] = useState(true);
     const {setlocationUser,setSelectedUserLocation,selectedPlace,location} = useLocation();
     
-    const handlePressNowLoacation = () => {
-
-      
-      setlocationUser({ latitude: location.latitude, longitude: location.longitude });
+    const handlePressNowLoacation = async () => {
+      // ดึงตำแหน่งปัจจุบันของผู้ใช้
+      if (location) {
+        // เมื่อมีตำแหน่งของผู้ใช้
+        setlocationUser({ latitude: location.latitude, longitude: location.longitude });
+  
+        // ใช้ Google Maps API เพื่อค้นหาข้อมูลสถานที่จาก latitude, longitude
+        const placeDetails = await fetchPlaceDetailsByCoordinates(location.latitude, location.longitude);
+  
+        // เมื่อได้รับข้อมูลจาก Google Maps API
+        if (placeDetails) {
+          setSelectedUserLocation(placeDetails); // อัพเดทข้อมูลสถานที่
+        }
+      }
       if (onClose) {
         onClose();
+      }
+    };
+  
+    // ฟังก์ชันค้นหาข้อมูลสถานที่โดยใช้ latitude และ longitude
+    const fetchPlaceDetailsByCoordinates = async (latitude, longitude) => {
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAP_API_KEY}`
+        );
+        const data = await response.json();
+  
+        if (data.status !== "OK") {
+          console.error("Error fetching place details:", data.error_message || data.status);
+          return null;
+        }
+  
+        // ดึงข้อมูลที่จำเป็นจากผลลัพธ์
+        const placeDetails = data.results[0];
+        return {
+          name: placeDetails.formatted_address,
+          address: placeDetails.formatted_address,
+          photos: placeDetails.photos || [],
+        };
+      } catch (error) {
+        console.error("Fetch Place Details Error:", error);
+        return null;
       }
     };
 

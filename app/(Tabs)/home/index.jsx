@@ -5,14 +5,21 @@ import { View, Animated, ScrollView } from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 import * as Location from "expo-location";
 import { useLocation } from "@context/LocationContext";
+import { useUser } from "@context/UserContext";
 import PlaceDetailHome from "@components/homes/PlaceDetailHome";
 import SelectRoute from "@components/homes/SelectRoute";
+import Constants from "expo-constants";
+
 
 export default function Home() {
+  const API_BE_URL = Constants.expoConfig.extra.API_BE_URL;
   const { location, setLocation, selectedPlace, locationUser} = useLocation();
+  const { userID,isDriver } = useUser();
   const [contentHeight, setContentHeight] = useState(300);
   const [isExpanded, setIsExpanded] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(false);
+  const scrollViewRef = useRef(null);
+  
 
   const height = useRef(new Animated.Value(300)).current;
   const lastGesture = useRef(300);
@@ -77,6 +84,42 @@ export default function Home() {
     setContentHeight(height);
   };
 
+  const sendDriverLocationToBackend = async (data) => {
+    try {
+      const senddata = {
+        latitude: data.latitude,
+        longitude: data.longitude
+      }
+      console.log(senddata);
+      const response = await fetch(`${API_BE_URL}/v1/live-tracking/driver/${userID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(senddata),
+      });
+      console.log('Driver Location sent:', await response.json());
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+  };
+
+  const sendPassengerLocationToBackend = async (data) => {
+    try {
+      const senddata = {
+        latitude: data.latitude,
+        longitude: data.longitude
+      }
+      console.log(senddata);
+      const response = await fetch(`${API_BE_URL}/v1/live-tracking/passenger/${userID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(senddata),
+      });
+      console.log('Passenger Location sent:', await response.json());
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+  };
+
   // Fetch location
   useEffect(() => {
     (async () => {
@@ -87,8 +130,41 @@ export default function Home() {
       }
       let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       setLocation(loc.coords);
+      
+      
+    
+    if(isDriver){
+      sendDriverLocationToBackend(loc.coords);
+    };
+    sendPassengerLocationToBackend(loc.coords)
     })();
-  }, []);
+    const interval = setInterval(() => {
+      (async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.log("Permission denied");
+          return;
+        }
+        let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+        setLocation(loc.coords);
+        
+        
+      
+      if(isDriver){
+        sendDriverLocationToBackend(loc.coords);
+      };
+      sendPassengerLocationToBackend(loc.coords)
+      })();
+    }, 10000);
+
+    //อันนี้เป็นResetเมื่อเรากดเปลียนหน้า
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: 0, animated: true });
+    }
+    return () => clearInterval(interval);
+  }, [selectedPlace]);
+
+  
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -124,6 +200,7 @@ export default function Home() {
             }}
           >
             <ScrollView
+              ref={scrollViewRef}
               scrollEnabled={scrollEnabled}
               onScroll={handleScroll}
               scrollEventThrottle={16}
@@ -132,11 +209,11 @@ export default function Home() {
             >
               <View onLayout={onContentLayout}>
               {locationUser && selectedPlace ? (
-                <SelectRoute/>  // แสดงคอมโพเนนต์ใหม่เมื่อมีทั้ง selectedPlace และ selectedUserLocation
+                <SelectRoute/>  
               ) : selectedPlace ? (
-                <PlaceDetailHome place={selectedPlace} />  // แสดง PlaceDetailHome เมื่อมีแค่ selectedPlace
+                <PlaceDetailHome place={selectedPlace} />  
               ) : (
-                <Content />  // แสดง Content เมื่อไม่มี selectedPlace
+                <Content/>
               )}
               </View>
             </ScrollView>

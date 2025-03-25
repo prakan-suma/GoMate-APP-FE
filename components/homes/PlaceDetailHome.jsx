@@ -4,8 +4,9 @@ import Constants from "expo-constants";
 import ButtonWithIcon from "@components/ui/ButtonWithIcon";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocation } from "@context/LocationContext";
-import { useUser } from "@context/UserContext";
 import { Link,useRouter  } from "expo-router";
+import { useUser } from "@context/UserContext";
+import { useTrip } from '@context/TripContext';
 
 
 export default function PlaceDetailHome({ place }) {
@@ -13,6 +14,7 @@ export default function PlaceDetailHome({ place }) {
   const GOOGLE_MAP_API_KEY = Constants.expoConfig.extra.GOOGLE_MAP_API_KEY;
   const {setLocationPlace,setSelectedPlace} = useLocation();
   const {setRole} = useUser();
+  const {setcreattripdata} = useTrip();
 
   const handleBackPress = () => {
     setSelectedPlace(null);

@@ -8,20 +8,26 @@ const SettingScreen = () => {
   const [emailNotification, setEmailNotification] = useState(true);
   const [smsNotification, setSmsNotification] = useState(false);
   const router = useRouter();
+  const [name, setName] = useState("ลงตู่");
+  const [dob, setDob] = useState("14/02/1452");
+  const [email, setEmail] = useState("LungTuu@gmail.com");
+  const [phone, setPhone] = useState("02-222-0212");
+  const [gender, setGender] = useState("ชาย");
+
 
   const goToEditPage = () => {
     router.push("/setting/EditProfile")
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.header}>ตั้งค่า</Text>
       <View style={styles.profileContainer}>
         <Image source={{ uri: "https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/1020D/production/_104916066_hi050616611.jpg.webp" }} style={styles.profileImage} />
         <View style={styles.profileText}>
-          <Text style={styles.profileName}>ตุดตู่ อยู่นี่</Text>
-          <Text>เพศ : ชาย   อายุ : 55 ปี</Text>
-          <Text style={styles.email}>Tonynaja@gmail.com</Text>
+          <Text style={styles.profileName}>{name}</Text>
+          <Text>เพศ : {gender}   อายุ : 55 ปี</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
         <TouchableOpacity style={styles.editButton} onPress={goToEditPage}>
           <Text style={styles.editText}>แก้ไข</Text>

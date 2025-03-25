@@ -323,24 +323,26 @@ export default function SelectRoute (){
             <Text className="font-bold text-2xl ml-4" style={{marginTop:10,}}>คนขับใกล้คุณ</Text>
             <View style={{marginTop:10,}}>
             {filteredTrips.map((item) => (
-                <TouchableOpacity
-                key={item.id}
-                onPress={() => handleSelectDriver(item)}
-                style={styles.card}
-                >
-                <Image source={require('../../assets/images/Car.png')} style={styles.image} />
-                <View style={styles.details}>
-                    <Text style={styles.carName}>{item.driver.driver_documents.vehicle_brand} {item.driver.driver_documents.vehicle_model} {item.driver.driver_documents.vehicle_color}</Text>
-                    <Text style={styles.text}>
-                    <Ionicons name="person-outline" size={16} color="#2C64F3" /> {item.available_seats} | ค่าโดยสาร : {item.fare} ฿
-                    </Text>
-                </View>
-                <View style={styles.ratingContainer}>
-                    <Text style={styles.ratingText}>
-                    “3” <Ionicons name="star" size={14} color="gold" />
-                    </Text>
-                </View>
-                </TouchableOpacity>
+                item.available_seats !== 0 && (
+                    <TouchableOpacity
+                        key={item.id}
+                        onPress={() => handleSelectDriver(item)}
+                        style={styles.card}
+                    >
+                        <Image source={require('../../assets/images/Car.png')} style={styles.image} />
+                        <View style={styles.details}>
+                            <Text style={styles.carName}>{item.driver.driver_documents.vehicle_brand} {item.driver.driver_documents.vehicle_model} {item.driver.driver_documents.vehicle_color}</Text>
+                            <Text style={styles.text}>
+                                <Ionicons name="person-outline" size={16} color="#2C64F3" /> {item.available_seats} | ค่าโดยสาร : {item.fare} ฿
+                            </Text>
+                        </View>
+                        <View style={styles.ratingContainer}>
+                            <Text style={styles.ratingText}>
+                                “3” <Ionicons name="star" size={14} color="gold" />
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                )
             ))}
             </View>
 

@@ -1,25 +1,27 @@
-import Content from "@components/homes/Content";
-import MapViewHome from "@components/homes/MapViewHome";
 import React, { useRef, useState, useEffect } from "react";
-import { View, Animated, ScrollView } from "react-native";
+import { View,Text,Animated, ScrollView ,TouchableOpacity} from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 import * as Location from "expo-location";
 import { useLocation } from "@context/LocationContext";
-import { useUser } from "@context/UserContext";
-import PlaceDetailHome from "@components/homes/PlaceDetailHome";
-import SelectRoute from "@components/homes/SelectRoute";
-import Constants from "expo-constants";
+import { useTrip } from "@context/TripContext";
+
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import TripDetailContent from "@components/trip/TripDetailContent";
+import LocationBanner from "@components/trip/LocationBanner";
+import MapViewTrip from "@components/trip/MapViewTrip";
 
 
-export default function Home() {
-  const API_BE_URL = Constants.expoConfig.extra.API_BE_URL;
+export default function Show_Detail_Trip() {
+  const router = useRouter();
   const { location, setLocation, selectedPlace, locationUser} = useLocation();
-  const { userID,isDriver } = useUser();
+  const {setTrippagedata,Trippagedata} = useTrip()
+
+
   const [contentHeight, setContentHeight] = useState(300);
   const [isExpanded, setIsExpanded] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(false);
   const scrollViewRef = useRef(null);
-  
 
   const height = useRef(new Animated.Value(300)).current;
   const lastGesture = useRef(300);
@@ -84,43 +86,12 @@ export default function Home() {
     setContentHeight(height);
   };
 
-  const sendDriverLocationToBackend = async (data) => {
-    try {
-      const senddata = {
-        latitude: data.latitude,
-        longitude: data.longitude
-      }
-      console.log(senddata);
-      const response = await fetch(`${API_BE_URL}/v1/live-tracking/driver/${userID}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(senddata),
-      });
-      console.log('Driver Location sent:', await response.json());
-    } catch (error) {
-      console.error('Error sending data:', error);
-    }
-  };
+  const handleBackPress = () => {
+    setTrippagedata(null)
+    router.back()
+  }
 
-  const sendPassengerLocationToBackend = async (data) => {
-    try {
-      const senddata = {
-        latitude: data.latitude,
-        longitude: data.longitude
-      }
-      console.log(senddata);
-      const response = await fetch(`${API_BE_URL}/v1/live-tracking/passenger/${userID}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(senddata),
-      });
-      console.log('Passenger Location sent:', await response.json());
-    } catch (error) {
-      console.error('Error sending data:', error);
-    }
-  };
 
-  // Fetch location
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -130,45 +101,21 @@ export default function Home() {
       }
       let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       setLocation(loc.coords);
-      
-      
-    
-    if(isDriver){
-      sendDriverLocationToBackend(loc.coords);
-    };
-    sendPassengerLocationToBackend(loc.coords)
     })();
-    const interval = setInterval(() => {
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission denied");
-          return;
-        }
-        let loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-        setLocation(loc.coords);
-        
-        
-      
-      if(isDriver){
-        sendDriverLocationToBackend(loc.coords);
-      };
-      sendPassengerLocationToBackend(loc.coords)
-      })();
-    }, 10000);
 
-    //อันนี้เป็นResetเมื่อเรากดเปลียนหน้า
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ y: 0, animated: true });
     }
-    return () => clearInterval(interval);
   }, [selectedPlace]);
 
   
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+    
       <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
+        
+        
         <PanGestureHandler
           onGestureEvent={handleGestureEvent}
           onEnded={handleGestureEnd}
@@ -178,7 +125,6 @@ export default function Home() {
             style={{
               height,
               maxHeight: 500,
-              // minHeight: "fit",
               position: "absolute",
               bottom: 0,
               left: 0,
@@ -205,23 +151,21 @@ export default function Home() {
               onScroll={handleScroll}
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={true}
-            // contentContainerStyle={{ paddingTop: 12 }}
             >
-              <View onLayout={onContentLayout}>
-              {locationUser && selectedPlace ? (
-                <SelectRoute/>  
-              ) : selectedPlace ? (
-                <PlaceDetailHome place={selectedPlace} />  
-              ) : (
-                <Content/>
-              )}
-              </View>
+            <View onLayout={onContentLayout}>
+              <TripDetailContent/>
+            </View>
+              
             </ScrollView>
           </Animated.View>
         </PanGestureHandler>
-
-        {/* Map View */}
-        <MapViewHome/>
+        <MapViewTrip/>
+        <LocationBanner location={Trippagedata.destination}/>
+        <View className="flex-row items-center mb-6" style={{padding:15,paddingTop:30,position: "absolute",}}>
+            <TouchableOpacity onPress={() => handleBackPress()}>
+                <Ionicons name="chevron-back-outline" size={32} />
+            </TouchableOpacity>
+        </View>
       </View>
     </GestureHandlerRootView>
   );

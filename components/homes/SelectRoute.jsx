@@ -1,15 +1,70 @@
-import React from "react";
-import { View, Text, Image, FlatList, ScrollView,StyleSheet, TouchableOpacity,TextInput } from "react-native";
-import Constants from "expo-constants";
-import ButtonWithIcon from "@components/ui/ButtonWithIcon";
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, ScrollView,StyleSheet, TouchableOpacity,TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocation } from "@context/LocationContext";
-import { Link,useRouter  } from "expo-router";
+import { useRouter  } from "expo-router";
+import Constants from "expo-constants";
 import { useUser } from "@context/UserContext";
+import { useTrip } from "@context/TripContext";
 
 export default function SelectRoute (){
-    const {setlocationUser,setSelectedUserLocation,selectedUserLocation,selectedPlace,distance, setdistance,duration, setduration,} = useLocation();
-    const {Role} = useUser();
+    const router = useRouter();
+    const {setSelectedPlace,setLocationPlace,setlocationUser,setSelectedUserLocation,selectedUserLocation,selectedPlace,distance, setdistance,duration, setduration,locationPlace,location} = useLocation();
+    const {setselectDriver,creattripdata} = useTrip();
+    const {Role,setRole,userID} = useUser();
+    const API_BE_URL = Constants.expoConfig.extra.API_BE_URL;
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
+    const currentDate = new Date();
+    const localDate = currentDate.getFullYear() +
+    '-' + String(currentDate.getMonth() + 1).padStart(2, '0') +
+    '-' + String(currentDate.getDate()).padStart(2, '0') +
+    'T' + String(currentDate.getHours()).padStart(2, '0') +
+    ':' + String(currentDate.getMinutes()).padStart(2, '0') +
+    ':' + String(currentDate.getSeconds()).padStart(2, '0');
+
+    const [driverNearME, setDriverNearME] = useState(null);
+    const [Trips, setTrips] = useState(null);
+    const [filteredTrips, setFilteredTrips] = useState([]);
+
+    const handleCreateTrip = async () => {
+        const data = {
+            driver_id: userID,
+            origin: selectedUserLocation?.name,
+            destination: selectedPlace?.name,
+            latitude_des: locationPlace?.latitude?.toString(),
+            longitude_des: locationPlace?.longitude?.toString(),
+            departure_time: localDate,
+            available_seats: creattripdata?.available_seats,
+            fare: creattripdata?.Fare,
+        };
+    
+        console.log('Data being sent to API:', data); // เพิ่มการ log ข้อมูล
+    
+        if (!data.origin || !data.destination || !data.latitude_des || !data.longitude_des || !data.departure_time || !data.available_seats || !data.fare) {
+            console.log("Error: Some required fields are missing");
+            return;
+        }
+    
+        try {
+            const response = await fetch(`${API_BE_URL}/v1/trips/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            const result = await response.json();
+            if (response.ok) {
+                console.log('Success', 'Trip created successfully');
+            } else {
+                console.log('Error occurred', result.detail || 'Unable to create Trip');
+            }
+        } catch (error) {
+            console.log('Error', error.message);
+        }
+    };
     
     const handleBackPress = () => {
         setlocationUser(null);
@@ -18,50 +73,105 @@ export default function SelectRoute (){
         setduration(null);
     };
 
-    const testData = [
-        {
-          id: "1",
-          car: "Mazda 3 hatchback",
-          passengers: 1,
-          date: "10 ก.พ. 2025 9:00 น.",
-          from: "จุฬา",
-          to: "Siam Paragon",
-          status: "สำเร็จแล้ว",
-          statusColor: "#4EA134",
-          icon: "checkmark-outline",
-          rating: "4",
-        },
-        {
-          id: "2",
-          car: "Toyota yaris cross",
-          passengers: 3,
-          date: "18 ม.ค. 2025 21:00 น.",
-          from: "Central Ladprao",
-          to: "Siam Paragon",
-          status: "ล้มเหลว",
-          statusColor: "#8B1A10",
-          icon: "close-outline",
-          rating: "4",
-        },
-        {
-          id: "3",
-          car: "Mazda 3 hatchback",
-          passengers: 4,
-          date: "18 ม.ค. 2025 19:35 น.",
-          from: "Central Ladprao",
-          to: "จุฬา",
-          status: "ล้มเหลว",
-          statusColor: "#8B1A10",
-          icon: "close-outline",
-          rating: "4",
-        },
-      ];
+    const handleSelectDriver = (data) => {
+        setselectDriver(data)
+        router.push("/home/SelectDriver")
+      };
 
+    const hadleCreateTripPrass = () => {
+        setSelectedPlace(null);
+        setLocationPlace(null);
+        setSelectedUserLocation(null);
+        setlocationUser(null);
+        setdistance(null);
+        setduration(null);
+        handleCreateTrip();
+        setRole(true);
+        router.push("/(Tabs)/trip")
+    }
 
-    if(Role === true){
+    const haversineDistance = (lat1, lon1, lat2, lon2) => {
+        const toRad = (value) => (value * Math.PI) / 180;
+        const R = 6371; // Earth's radius in km
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in km
+    };
+    
+    const fetchDriverNearME = async () => {
+        try {
+            const response = await fetch(`${API_BE_URL}/v1/live-tracking/passengers/nearby-drivers/1?latitude=${location.latitude}&longitude=${location.longitude}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const result = await response.json();
+            return result.drivers; // ส่งคืนค่าแทนการเซ็ต State ทันที
+        } catch (error) {
+            console.error('Error fetching nearby drivers:', error);
+            return [];
+        }
+    };
+    
+    const fetchTripsByDriver = async (driverId) => {
+        try {
+            const response = await fetch(`${API_BE_URL}/v1/trips/?user_ids=${driverId}&skip=0&limit=100`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch trips');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching trips:', error);
+            return [];
+        }
+    };
+    
+    const searchTrip = async () => {
+        setLoading(true);
+        try {
+            const drivers = await fetchDriverNearME();
+            if (!drivers || drivers.length === 0) {
+                setFilteredTrips([]);
+                return;
+            }
+    
+            let allTrips = [];
+            for (const driver of drivers) {
+                const trips = await fetchTripsByDriver(driver.driver_id);
+                allTrips = [...allTrips, ...trips];
+            }
+    
+            const filteredTrips = allTrips.filter(trip => {
+                const distance = haversineDistance(
+                    locationPlace.latitude, locationPlace.longitude,
+                    trip.latitude_des, trip.longitude_des
+                );
+                return distance <= 3;
+            });
+    
+            setFilteredTrips(filteredTrips);
+            console.log(filteredTrips);
+        } catch (error) {
+            console.error('Error in searchTrip:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    // เรียก searchTrip ทุกครั้งที่ Component โหลดหรือ Role เปลี่ยน
+    useEffect(() => {
+        if (!Role) {
+            searchTrip();
+        }
+    }, [Role]);
+
+    if(Role){
         return (
             <ScrollView
-            style={{ flex: 1 }}
+            style={{ flex: 1 }} 
             contentContainerStyle={{ paddingBottom: 20 }}
             nestedScrollEnabled={true}
             showsVerticalScrollIndicator={false}
@@ -114,6 +224,7 @@ export default function SelectRoute (){
                         }}
                         />
                     </View>
+                    
                 </View>
                 
 
@@ -131,7 +242,7 @@ export default function SelectRoute (){
                         marginRight: 10,
                         flexDirection: 'row',
                         alignItems: 'center',
-                        }}>
+                        }}onPress={hadleCreateTripPrass}>
                         <Ionicons name="car-outline" size={20} color="#fff" />
                         <Text style={{ color: '#fff', marginLeft: 8, fontWeight: 'bold' }}>เริ่มเดินทาง</Text>
                         </TouchableOpacity>
@@ -211,25 +322,27 @@ export default function SelectRoute (){
             </View>
             <Text className="font-bold text-2xl ml-4" style={{marginTop:10,}}>คนขับใกล้คุณ</Text>
             <View style={{marginTop:10,}}>
-            {testData.map((item) => (
-                <TouchableOpacity
-                key={item.id}
-                onPress={() => console.log('Pressed:', item)}
-                style={styles.card}
-                >
-                <Image source={require('../../assets/images/Car.png')} style={styles.image} />
-                <View style={styles.details}>
-                    <Text style={styles.carName}>{item.car}</Text>
-                    <Text style={styles.text}>
-                    <Ionicons name="person-outline" size={12} color="#2C64F3" /> {item.passengers}
-                    </Text>
-                </View>
-                <View style={styles.ratingContainer}>
-                    <Text style={styles.ratingText}>
-                    “{item.rating}” <Ionicons name="star" size={14} color="gold" />
-                    </Text>
-                </View>
-                </TouchableOpacity>
+            {filteredTrips.map((item) => (
+                item.available_seats !== 0 && (
+                    <TouchableOpacity
+                        key={item.id}
+                        onPress={() => handleSelectDriver(item)}
+                        style={styles.card}
+                    >
+                        <Image source={require('../../assets/images/Car.png')} style={styles.image} />
+                        <View style={styles.details}>
+                            <Text style={styles.carName}>{item.driver.driver_documents.vehicle_brand} {item.driver.driver_documents.vehicle_model} {item.driver.driver_documents.vehicle_color}</Text>
+                            <Text style={styles.text}>
+                                <Ionicons name="person-outline" size={16} color="#2C64F3" /> {item.available_seats} | ค่าโดยสาร : {item.fare} ฿
+                            </Text>
+                        </View>
+                        <View style={styles.ratingContainer}>
+                            <Text style={styles.ratingText}>
+                                “3” <Ionicons name="star" size={14} color="gold" />
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                )
             ))}
             </View>
 
@@ -244,9 +357,9 @@ const styles = StyleSheet.create({
   header: { fontSize: 24, fontWeight: "bold", marginBottom: 10 ,padding: 10},
   card: { flexDirection: "row", backgroundColor: "#FFFFFF", padding: 15, marginBottom: 10, borderRadius: 10, },
   image: { width: 60, height: 60, marginRight: 10},
-  details: { flex: 1, marginRight: 10},
+  details: { flex: 1, marginRight: 10,marginTop:5},
   carName: { fontSize: 16, fontWeight: "bold" },
-  text: { fontSize: 14, color: "#555" },
+  text: { fontSize: 16, color: "#555" },
   statusRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 5 },
   ratingContainer: {
     flexDirection: 'row',

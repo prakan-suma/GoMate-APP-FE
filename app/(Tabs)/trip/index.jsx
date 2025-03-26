@@ -5,7 +5,7 @@ import { View } from 'react-native'
 
 export default function Trip() {
   return (
-    <View className='flex-1 h-full w-full'>
+    <View className='flex-1 h-full w-full' style={{backgroundColor: "#fff"}}>
       <Trip_Content/>
     </View>
   )

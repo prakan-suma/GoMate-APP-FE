@@ -1,47 +1,38 @@
 import React, { Component,useEffect,useState } from 'react';
 import { View, Text,TextInput , TouchableOpacity,Button} from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from '@context/UserContext';
+import { useTrip } from '@context/TripContext';
 
 
 const SwitchContent = () => {
+    const {creattripdata,setcreattripdata} = useTrip();
     const [passengerCount, setPassengerCount] = useState("1");
-    const [fare, setFare] = useState('0');
-    const [date, setDate] = useState(new Date());
-    const [time, setTime] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState(false);
-    const {Role,setRole} = useUser();
+    const [fare, setFare] = useState('1');
+    const { Role, setRole } = useUser();
 
     const handleFareChange = (text) => {
         const numericText = text.replace(/[^0-9]/g, '');
-        setFare(numericText);
-    };
-
-    const handlePassengerChange = (text) => {
-        const numericText = text.replace(/[^0-9]/g, '');
-        if (parseInt(numericText) <= 99 || numericText === '') {
-          setPassengerCount(numericText);
-        }
-        if(numericText == "0"){
-            setPassengerCount("1")
-        }
+        setFare(numericText || '1'); // ตั้งค่าเป็น '0' ถ้าไม่มีค่า
       };
- 
-    const handleDateChange = (event, selectedDate) => {
-        setShowDatePicker(false); 
-        if (selectedDate) setDate(selectedDate);
-    };
+    
+      const handlePassengerChange = (text) => {
+        const numericText = text.replace(/[^0-9]/g, '');
+        const count = numericText === '' || parseInt(numericText) === 0 ? '1' : numericText;
+        setPassengerCount(count);
+      };
+    
+      useEffect(() => {
+        const fareValue = parseInt(fare) || 0;
+        const passengerValue = parseInt(passengerCount) || 1;
+        setcreattripdata({ Fare: fareValue, available_seats: passengerValue });
+      }, [fare, passengerCount, setcreattripdata,Role]);
+    
 
-    const handleTimeChange = (event, selectedTime) => {
-        setShowTimePicker(false);
-        if (selectedTime) setTime(selectedTime);
-    };
     if (Role === true) {
         return (
             <View>
-                <View style={{marginBottom: 10,}}>
+                <View style={{ marginBottom: 10 }}>
                     <Text className="text-gray-800 font-bold">เปิดรับผู้โดยสารจำนวน</Text>
                 </View>
                 <View style={{
@@ -50,7 +41,7 @@ const SwitchContent = () => {
                     borderWidth: 1,
                     borderColor: "#E5EAEE",
                     borderRadius: 8,
-                    paddingHorizontal: 10, 
+                    paddingHorizontal: 10,
                     paddingVertical: 1,
                     width: 90,
                     marginBottom: 10,
@@ -69,66 +60,8 @@ const SwitchContent = () => {
                         }}
                     />
                 </View>
-                <View>
-                <View style={{marginBottom: 10,}}>
-                        <Text className="text-gray-800 font-bold">วันและเวลาการเดินทาง</Text>
-                    </View>
-                    <View style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: 10,
-                        marginBottom: 10,
-                    }}>
-                        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={{
-                            flexDirection: "row",
-                            borderWidth: 1,
-                            borderColor: "#E5EAEE",
-                            borderRadius: 8,
-                            padding: 10,
-                            flex: 1,
-                            alignItems: "center",
-                            marginHorizontal: 5,
-                        }}>
-                            <Ionicons name="calendar-outline" size={24} color="#2C64F3" />
-                            <Text style={{
-                                flex: 1,
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                color: "#2C64F3",
-                            }}>{date.toLocaleDateString()}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setShowTimePicker(true)} style={{
-                            flexDirection: "row",
-                            borderWidth: 1,
-                            borderColor: "#E5EAEE",
-                            borderRadius: 8,
-                            padding: 10,
-                            flex: 1,
-                            alignItems: "center",
-                            marginHorizontal: 5,
-                        }}>
-                            <Ionicons name="alarm-outline" size={24} color="#2C64F3" />
-                            <Text style={{
-                                flex: 1,
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                color: "#2C64F3",
-                                
-                            }}>{time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    
-                </View>
 
-                
-                    {showDatePicker && (
-                        <DateTimePicker value={date} mode="date" display="default" onChange={handleDateChange} />
-                    )}
-                    {showTimePicker && (
-                        <DateTimePicker value={time} mode="time" display="default" onChange={handleTimeChange} />
-                    )} 
-
-                <View style={{marginBottom: 10,}}>
+                <View style={{ marginBottom: 10 }}>
                     <Text className="text-gray-800 font-bold">ค่าโดยสาร</Text>
                 </View>
                 <View style={{
@@ -137,7 +70,7 @@ const SwitchContent = () => {
                     borderWidth: 1,
                     borderColor: "#E5EAEE",
                     borderRadius: 8,
-                    paddingHorizontal: 10, 
+                    paddingHorizontal: 10,
                     paddingVertical: 1,
                     width: 90,
                 }}>
@@ -156,10 +89,11 @@ const SwitchContent = () => {
                     />
                 </View>
             </View>
-          );
+        );
     }
-}
+};
 
 export default SwitchContent;
+
 
 

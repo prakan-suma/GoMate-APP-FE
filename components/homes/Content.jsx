@@ -7,17 +7,25 @@ import { Link } from 'expo-router';
 import { useUser } from "@context/UserContext";
 
 const Content = () => {
+  const {isDriver} = useUser();
+
+  const ShowSwich = () => {
+    if(isDriver){
+      return(
+        <View className="w-full rounded-xl  gap-4">
+          <Text className="text-gray-800 font-bold">เลือกประเภทผู้ใช้งาน</Text>
+          <UserTypeSwitch/>
+        </View>
+      )
+    }
+  }
 
   return (
     <View className="w-full py-6 rounded-xl  gap-4">
       <View className="w-full flex-row justify-center mb-2">
         <View className="w-1/2 h-1 bg-gray-300 rounded-lg" />
       </View>
-      
-      <Text className="text-gray-800 font-bold">เลือกประเภทผู้ใช้งาน</Text>
-
-      <UserTypeSwitch/>
-
+      {ShowSwich()}
       <View>
         <SwitchContent/>
       </View>

@@ -159,7 +159,7 @@ export default function SelectRoute (){
                     locationPlace.latitude, locationPlace.longitude,
                     trip.latitude_des, trip.longitude_des
                 );
-                return distance <= 3;
+                return distance <= 5;
             });
     
             setFilteredTrips(filteredTrips);

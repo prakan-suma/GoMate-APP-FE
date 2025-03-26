@@ -62,7 +62,7 @@ const SelectDriver = () => {
       router.push("/(Tabs)/trip");
     }
     else if(selectDriver.available_seats < passengerCount){
-      Alert.alert("ที่นั้งไม่เพี่ยงพอต่อการจอง");
+      Alert.alert("ที่นั้งไม่เพียงพอต่อการจอง");
       return;
     }
     else{

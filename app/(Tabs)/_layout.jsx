@@ -19,7 +19,7 @@ export default function TabsLayout() {
       }}
     >
       {[
-        { name: "home", label: "หน้าแรก", icon: "home-outline", iconFocused: "home" },
+        { name: "home", label: "หน้าหลัก", icon: "home-outline", iconFocused: "home" },
         { name: "trip", label: "ทริป", icon: "car-outline", iconFocused: "car" },
         { name: "history", label: "ประวัติ", icon: "time-outline", iconFocused: "time" },
         { name: "setting", label: "ตั้งค่า", icon: "settings-outline", iconFocused: "settings" },

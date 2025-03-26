@@ -78,7 +78,7 @@ export default function TripDetailContent(){
       };
       
 
-    const fetchTripData = async () => {
+      const fetchTripData = async () => {
         try {
             const response = await fetch(`${API_BE_URL}/v1/trips/${Trippagedata.id}`);
             if (!response.ok) {
@@ -169,7 +169,9 @@ export default function TripDetailContent(){
 
     useEffect(() => {
         fetchTripData();
-    }, []);
+        const interval = setInterval(fetchTripData, 10000); // ดึงข้อมูลทุกๆ 10 วินาที
+        return () => clearInterval(interval); // เคลียร์เมื่อ Component ถูก Unmount
+    }, [Trippagedata.id]);
 
     if(Role){
         return (

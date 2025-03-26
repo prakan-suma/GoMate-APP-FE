@@ -2,14 +2,15 @@ import { Stack } from 'expo-router'
 import React from 'react'
 import { UserProvider } from '@context/UserContext'
 import { LocationProvider } from 'context/LocationContext'
+import { TripProvider } from '@context/TripContext'
 
 function TripLayout() {
   return (
     <LocationProvider>
       <UserProvider>
-        <Stack>
-          <Stack.Screen name='index' options={{title: "Trip"}}/>
-        </Stack>
+        <TripProvider>
+            <Stack screenOptions={{title: "Trip", headerShown: false}}/>
+        </TripProvider>
       </UserProvider>
     </LocationProvider>
   )

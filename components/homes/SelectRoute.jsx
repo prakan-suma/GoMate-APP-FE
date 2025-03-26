@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView,StyleSheet, TouchableOpacity,TextInput } from "react-native";
+import { View, Text, Image, ScrollView,StyleSheet, TouchableOpacity,TextInput,Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocation } from "@context/LocationContext";
 import { useRouter  } from "expo-router";
@@ -79,15 +79,25 @@ export default function SelectRoute (){
       };
 
     const hadleCreateTripPrass = () => {
-        setSelectedPlace(null);
-        setLocationPlace(null);
-        setSelectedUserLocation(null);
-        setlocationUser(null);
-        setdistance(null);
-        setduration(null);
-        handleCreateTrip();
-        setRole(true);
-        router.push("/(Tabs)/trip")
+        if(creattripdata.available_seats && creattripdata.available_seats != 0 && creattripdata.Fare && creattripdata.Fare != 0 ){
+            setSelectedPlace(null);
+            setLocationPlace(null);
+            setSelectedUserLocation(null);
+            setlocationUser(null);
+            setdistance(null);
+            setduration(null);
+            handleCreateTrip();
+            setRole(true);
+            router.push("/(Tabs)/trip")
+        }
+        else if(!creattripdata.available_seats|| creattripdata.available_seats == 0){
+            Alert.alert("กรุณาใส่จำนวนที่นั้ง");
+            return;
+        }
+        else if(!creattripdata.Fare|| creattripdata.Fare == 0){
+            Alert.alert("กรุณาใส่จำนวนค่าโดยสาร");
+            return;
+        }
     }
 
     const haversineDistance = (lat1, lon1, lat2, lon2) => {

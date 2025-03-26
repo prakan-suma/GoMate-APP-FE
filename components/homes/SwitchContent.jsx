@@ -13,13 +13,12 @@ const SwitchContent = () => {
 
     const handleFareChange = (text) => {
         const numericText = text.replace(/[^0-9]/g, '');
-        setFare(numericText || '1'); // ตั้งค่าเป็น '0' ถ้าไม่มีค่า
+        setFare(numericText);
       };
     
       const handlePassengerChange = (text) => {
         const numericText = text.replace(/[^0-9]/g, '');
-        const count = numericText === '' || parseInt(numericText) === 0 ? '1' : numericText;
-        setPassengerCount(count);
+        setPassengerCount(numericText);
       };
     
       useEffect(() => {

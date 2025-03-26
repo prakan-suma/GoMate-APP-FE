@@ -31,10 +31,10 @@ function EditProfile() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-      <ScrollView>
-        <View className="flex-row items-center mb-6">
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="chevron-back-outline" size={24} />
+      <ScrollView top={25}>
+        <View className="flex-row items-center mb-6 " >
+          <TouchableOpacity onPress={() => router.back() }>
+            <Ionicons name="chevron-back-outline" size={24}  />
           </TouchableOpacity>
           <Text className="text-xl ml-4 font-bold">แก้ไขโปรไฟล์</Text>
         </View>
@@ -93,11 +93,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     padding: 20,
+    
   },
   header: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
+    
   },
   profileContainer: {
     alignItems: "center",

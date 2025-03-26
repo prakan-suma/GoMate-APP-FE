@@ -104,8 +104,8 @@ const SwitchTripContent = () => {
             if(foundItem.status == "confirmed"){
                 return(
                     <View style={{flexDirection: "row",alignItems: "center"}}>
-                        <Ionicons name="checkmark-outline" size={28} color="#4EA134" />
-                        <Text style={{fontSize: 18,fontWeight:'bold',color:"#4EA134"}}>ได้รับการยืนยัน</Text>
+                        <Ionicons name="checkmark-outline" size={18} color="#4EA134" />
+                        <Text style={{fontSize: 15,fontWeight:'bold',color:"#4EA134"}}>ได้รับการยืนยัน</Text>
                     </View>
                 );
             }
@@ -192,8 +192,8 @@ const SwitchTripContent = () => {
         );
     } else if (!Role && PassengerData && Array.isArray(PassengerData) && PassengerData.length > 0) {
         return (
-            <View>
-                <ScrollView>
+            <View style={{ marginBottom: 80 }}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}>
                     <View style={{ marginTop: 10,paddingRight:30,paddingLeft:30 }}>
                         {PassengerData.map((item) => (
                             <TouchableOpacity
@@ -227,13 +227,13 @@ const SwitchTripContent = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#fff", padding: 25 },
-    header: { fontSize: 24, fontWeight: "bold", marginBottom: 10, padding: 10 },
-    card: { flexDirection: "row", backgroundColor: "#FFFFFF", padding: 15, marginBottom: 10, borderRadius: 10 },
-    image: { width: 60, height: 60, marginRight: 20 },
-    details: { flex: 1, marginRight: 10 },
+    header: { fontSize: 24, fontWeight: "bold", marginBottom: 10 ,padding: 10},
+    card: { flexDirection: "row", backgroundColor: "#f9f9f9", padding: 15, marginBottom: 10, borderRadius: 10, },
+    image: { width: 60, height: 60, marginRight: 10},
+    details: { flex: 1, marginRight: 1 ,paddingRight: 0},
     carName: { fontSize: 16, fontWeight: "bold" },
-    text: { fontSize: 14, color: "#555" },
-    statusRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 5 },
+    text: { fontSize: 13, color: "#555" },
+    statusRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 0  },
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',

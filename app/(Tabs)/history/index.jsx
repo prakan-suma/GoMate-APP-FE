@@ -92,7 +92,7 @@ export default function History() {
                 <Text style={{ color: item.statusColor, fontWeight: "bold" ,marginRight:"10" }}>
                   {item.status}
                 </Text>
-                <Ionicons name={item.icon} size={32} color={item.statusColor} style={{marginRight:"10"}}/>
+                <Ionicons name={item.icon} size={20} color={item.statusColor} style={{marginRight:"-10"}}/>
               </View>
           </View>
         )}
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
   header: { fontSize: 24, fontWeight: "bold", marginBottom: 10 ,padding: 10},
   card: { flexDirection: "row", backgroundColor: "#f9f9f9", padding: 15, marginBottom: 10, borderRadius: 10, },
   image: { width: 60, height: 60, marginRight: 10},
-  details: { flex: 1, marginRight: 10},
+  details: { flex: 1, marginRight: 1 ,paddingRight: 0},
   carName: { fontSize: 16, fontWeight: "bold" },
-  text: { fontSize: 14, color: "#555" },
-  statusRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 5 },
+  text: { fontSize: 13, color: "#555" },
+  statusRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 0  },
 });
